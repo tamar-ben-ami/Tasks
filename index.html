@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>המשימות שלנו</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242734;
+    --border: #2e3247;
+    --text: #e4e6ef;
+    --text-dim: #8b8fa3;
+    --accent: #6c72cb;
+    --accent-hover: #7f85d8;
+    --danger: #e5484d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 1.25rem; font-weight: 600; }
+  header h1 span { color: var(--accent); }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* ── Stats strip ── */
+  .stats-strip {
+    display: flex; gap: 20px; padding: 10px 28px; background: var(--surface);
+    border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
+  }
+  .stat { font-size: .8rem; color: var(--text-dim); }
+  .stat b { color: var(--text); font-size: .95rem; margin-left: 4px; }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: 8px 16px; border: none; border-radius: 8px;
+    font-size: .84rem; font-weight: 500; cursor: pointer;
+    transition: background .15s, transform .1s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-ghost { background: transparent; color: var(--text-dim); padding: 5px 8px; }
+  .btn-ghost:hover { color: var(--text); background: var(--surface2); }
+  .btn-sm { padding: 4px 10px; font-size: .78rem; }
+
+  .search-box {
+    padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-size: .84rem;
+    outline: none; width: 200px; font-family: inherit;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--text-dim); }
+
+  /* ── Board ── */
+  .board {
+    display: flex; gap: 14px; padding: 18px 28px;
+    flex: 1; overflow-x: auto; overflow-y: hidden; min-height: 0;
+  }
+  .column {
+    min-width: 300px; width: 300px; flex-shrink: 0;
+    display: flex; flex-direction: column; max-height: 100%;
+  }
+  .column-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 10px 10px 0 0;
+    background: var(--surface); border: 1px solid var(--border); border-bottom: none;
+    font-weight: 600; font-size: .85rem; flex-shrink: 0;
+  }
+  .column-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .column-count {
+    font-size: .75rem; color: var(--text-dim);
+    background: var(--surface2); padding: 2px 8px; border-radius: 10px;
+  }
+  .column-add {
+    margin-right: auto; width: 22px; height: 22px; border-radius: 6px;
+    border: none; background: var(--surface2); color: var(--text-dim);
+    font-size: .9rem; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; transition: all .15s; flex-shrink: 0;
+    margin-left: 0; margin-right: auto;
+  }
+  .column-add:hover { background: var(--accent); color: #fff; }
+  .column-body {
+    flex: 1; overflow-y: auto; padding: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 10px 10px;
+    min-height: 60px;
+  }
+  .column-body.drag-over { background: var(--surface2); border-color: var(--accent); }
+  .task-card.drop-above { border-top: 3px solid var(--accent); margin-top: -2px; }
+  .task-card.drop-below { border-bottom: 3px solid var(--accent); margin-bottom: -2px; }
+
+  /* Column colors */
+  .col-todo .column-dot       { background: #8b8fa3; }
+  .col-inprogress .column-dot { background: #4cc2ff; }
+  .col-done .column-dot       { background: #4cdf8b; }
+  .col-blocked .column-dot    { background: #ff6b6b; }
+
+  /* ── Task card ── */
+  .task-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 8px; cursor: grab;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .task-card:hover { border-color: var(--accent); }
+  .task-card.dragging { opacity: .5; cursor: grabbing; }
+
+  .task-top {
+    padding: 12px 14px 8px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .priority-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .priority-low    { background: #4cdf8b; }
+  .priority-medium { background: #ffc53d; }
+  .priority-high   { background: #ff8b3d; }
+  .priority-urgent { background: #ff4d4d; }
+
+  .task-info { flex: 1; min-width: 0; }
+  .task-title { font-weight: 600; font-size: .88rem; word-break: break-word; }
+  .task-desc {
+    font-size: .78rem; color: var(--text-dim); margin-top: 3px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .task-meta {
+    padding: 6px 14px 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .deadline-badge {
+    font-size: .72rem; padding: 2px 8px; border-radius: 6px;
+    background: var(--surface); color: var(--text-dim);
+  }
+  .deadline-badge.overdue { background: #3a1a1a; color: #ff6b6b; font-weight: 600; }
+  .deadline-badge.soon    { background: #3a2a1a; color: #ffc53d; }
+  .subtask-count {
+    font-size: .72rem; color: var(--text-dim); margin-right: auto;
+  }
+
+  /* ── Drilldown toggle ── */
+  .card-drilldown {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; font-size: .78rem; color: var(--text-dim);
+    cursor: pointer; border-top: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .card-drilldown:hover { background: var(--surface); color: var(--text); }
+  .card-drilldown-arrow {
+    font-size: .6rem; transition: transform .2s; display: inline-block;
+  }
+  .card-drilldown-arrow.open { transform: rotate(-90deg); }
+
+  /* ── Inline subtask tree on card ── */
+  .card-subs {
+    display: none; border-top: 1px solid var(--border);
+    padding: 8px 10px; max-height: 300px; overflow-y: auto;
+  }
+  .card-subs.open { display: block; }
+  .card-subs .subtree { margin-right: 0; }
+  .card-subs .subtree .subtree { margin-right: 10px; border-right: 2px solid var(--border); padding-right: 6px; margin-left: 0; border-left: none; padding-left: 0; }
+  .card-sub-row { display: flex; align-items: center; gap: 4px; padding: 3px 0; font-size: .8rem; position: relative; }
+  .card-sub-toggle {
+    width: 12px; height: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: .45rem; color: var(--text-dim); cursor: pointer; flex-shrink: 0;
+    border-radius: 3px; transition: transform .15s; user-select: none;
+  }
+  .card-sub-toggle:hover { background: var(--surface); }
+  .card-sub-toggle.open { transform: rotate(-90deg); }
+  .card-sub-toggle.invis { width: 12px; visibility: hidden; }
+
+  .card-sub-status {
+    font-size: .62rem; padding: 2px 3px; border-radius: 6px;
+    font-weight: 600; flex-shrink: 0;
+    border: none; cursor: pointer; outline: none;
+    -webkit-appearance: none; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238b8fa3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 2px center;
+    padding-left: 12px; padding-right: 3px;
+  }
+
+  .card-sub-text.done { text-decoration: line-through; color: var(--text-dim); }
+  .card-sub-effort {
+    font-size: .65rem; padding: 1px 4px; border-radius: 4px;
+    background: #1a3a5c; color: #4cc2ff; flex-shrink: 0; white-space: nowrap;
+    cursor: pointer; border: 1px solid transparent;
+  }
+  .card-sub-effort:hover { border-color: #4cc2ff; }
+  .card-sub-effort-input {
+    width: 34px; font-size: .65rem; padding: 1px 3px; border-radius: 4px;
+    background: #1a3a5c; color: #4cc2ff; border: 1px solid #4cc2ff;
+    outline: none; text-align: center; font-family: inherit;
+  }
+  .card-sub-note-row {
+    padding: 0 28px 2px 0; font-size: .72rem;
+  }
+  .card-sub-note-display {
+    color: var(--text-dim); font-style: italic; cursor: pointer;
+    padding: 1px 4px; border-radius: 4px; border: 1px solid transparent;
+    display: inline-block; max-width: 100%; word-break: break-word;
+  }
+  .card-sub-note-display:hover { border-color: var(--border); }
+  .card-sub-note-placeholder {
+    color: var(--border); font-style: italic; cursor: pointer;
+    padding: 1px 4px; font-size: .68rem;
+  }
+  .card-sub-note-placeholder:hover { color: var(--text-dim); }
+  .card-sub-note-input {
+    width: 100%; padding: 2px 6px; border-radius: 4px;
+    border: 1px solid var(--accent); background: var(--surface);
+    color: var(--text); font-size: .72rem; font-family: inherit;
+    font-style: italic; outline: none;
+  }
+
+  .card-sub-children { display: none; }
+  .card-sub-children.open { display: block; }
+
+  .card-sub-add-btn, .card-sub-reorder-btn {
+    width: 16px; height: 16px; border-radius: 4px; border: none;
+    background: transparent; color: var(--text-dim); font-size: .75rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; opacity: 0; transition: opacity .15s;
+  }
+  .card-sub-row:hover .card-sub-add-btn,
+  .card-sub-row:hover .card-sub-reorder-btn { opacity: 1; }
+  .card-sub-add-btn:hover, .card-sub-reorder-btn:hover { background: var(--accent); color: #fff; opacity: 1; }
+  .card-sub-reorder-btn { font-size: .6rem; }
+  .card-sub-reorder-btn.disabled { opacity: 0 !important; cursor: default; pointer-events: none; }
+
+  .card-sub-text { flex: 1; min-width: 0; word-break: break-word; line-height: 1.3; cursor: pointer; border-radius: 4px; padding: 1px 3px; }
+  .card-sub-text:hover { background: var(--surface); }
+  .card-sub-title-input {
+    flex: 1; min-width: 0; font-size: .8rem; padding: 1px 4px; border-radius: 4px;
+    border: 1px solid var(--accent); background: var(--surface);
+    color: var(--text); font-family: inherit; outline: none; word-break: break-word;
+  }
+
+  .card-sub-inline-add {
+    display: flex; gap: 4px; padding: 4px 0 2px; margin-right: 14px;
+  }
+  .card-sub-inline-add input {
+    flex: 1; padding: 4px 6px; border-radius: 5px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: .78rem;
+    font-family: inherit; outline: none;
+  }
+  .card-sub-inline-add input:focus { border-color: var(--accent); }
+
+  .card-add-root {
+    display: flex; gap: 6px; margin-top: 6px;
+  }
+  .card-add-root input {
+    flex: 1; padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: .8rem;
+    font-family: inherit; outline: none;
+  }
+  .card-add-root input:focus { border-color: var(--accent); }
+
+  .task-actions-row {
+    border-top: 1px solid var(--border); padding: 6px 10px;
+    display: flex; gap: 2px;
+  }
+
+  /* ── Subtask tree in modal ── */
+  .subtree { margin-right: 0; }
+  .subtree .subtree { margin-right: 20px; border-right: 2px solid var(--border); padding-right: 10px; margin-left: 0; border-left: none; padding-left: 0; }
+
+  .sub-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
+
+  .sub-toggle {
+    width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: .55rem; color: var(--text-dim); cursor: pointer; flex-shrink: 0;
+    border-radius: 3px; transition: transform .2s; user-select: none; border: none; background: none;
+  }
+  .sub-toggle:hover { background: var(--surface2); }
+  .sub-toggle.open { transform: rotate(-90deg); }
+  .sub-toggle.invis { visibility: hidden; }
+
+  .sub-status {
+    font-size: .72rem; padding: 2px 4px; border-radius: 6px;
+    font-weight: 600; flex-shrink: 0;
+    border: none; cursor: pointer; outline: none;
+    -webkit-appearance: none; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238b8fa3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 4px center;
+    padding-left: 16px; padding-right: 4px;
+  }
+
+  .sub-text { flex: 1; font-size: .85rem; }
+  .sub-text.done { text-decoration: line-through; color: var(--text-dim); }
+  .sub-effort {
+    font-size: .72rem; padding: 1px 7px; border-radius: 4px;
+    background: #1a3a5c; color: #4cc2ff; flex-shrink: 0;
+  }
+  .sub-note {
+    font-size: .72rem; color: var(--text-dim); font-style: italic; flex-shrink: 0;
+  }
+
+  .sub-children { display: none; }
+  .sub-children.open { display: block; }
+
+  .sub-add-row { display: flex; gap: 6px; margin-top: 6px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.6); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 26px;
+    width: 500px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+  }
+  .modal h2 { font-size: 1.1rem; margin-bottom: 18px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block; font-size: .8rem; color: var(--text-dim);
+    margin-bottom: 5px; font-weight: 500;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 9px 13px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-size: .87rem; font-family: inherit;
+    outline: none; transition: border-color .15s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-start; margin-top: 20px; }
+  .inline-input {
+    padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-size: .82rem;
+    font-family: inherit; outline: none; flex: 1;
+  }
+  .inline-input:focus { border-color: var(--accent); }
+
+  .subtask-section { margin-top: 8px; }
+  .subtask-section-header {
+    font-size: .82rem; font-weight: 600; color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .owner-badge {
+    font-size: .72rem; padding: 2px 8px; border-radius: 6px;
+    background: #2a1a3a; color: #b18cff; font-weight: 500;
+  }
+  .sync-btn {
+    padding: 6px 14px; border: none; border-radius: 8px;
+    font-size: .82rem; font-weight: 500; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #1a3a2a; color: #4cdf8b; transition: all .15s;
+  }
+  .sync-btn:hover { background: #2a4a3a; }
+  .sync-btn.saving { background: #3a2a1a; color: #ffc53d; }
+  .sync-btn.error { background: #3a1a1a; color: #ff6b6b; }
+  .sync-status { font-size: .68rem; color: var(--text-dim); }
+
+  @media (max-width: 700px) {
+    .board { padding: 10px; }
+    .column { min-width: 260px; width: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 <span>המשימות</span> שלנו</h1>
+  <div class="header-actions">
+    <span class="sync-status" id="syncStatus"></span>
+    <button class="sync-btn" id="syncBtn" onclick="cloudSave()" title="שמור לענן">💾 שמור</button>
+    <input type="text" class="search-box" id="searchBox" placeholder="חיפוש משימות..." oninput="render()">
+    <button class="btn btn-primary" onclick="openModal()">＋ משימה חדשה</button>
+  </div>
+</header>
+<div class="stats-strip" id="statsStrip"></div>
+
+<div class="board" id="board"></div>
+
+<!-- Task modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h2 id="modalTitle">משימה חדשה</h2>
+    <input type="hidden" id="editId">
+    <div class="form-group">
+      <label>כותרת *</label>
+      <input type="text" id="fTitle" placeholder="מה צריך לעשות?">
+    </div>
+    <div class="form-group">
+      <label>תיאור</label>
+      <textarea id="fDesc" placeholder="פרטים נוספים..."></textarea>
+    </div>
+    <div style="display:flex;gap:12px">
+      <div class="form-group" style="flex:1">
+        <label>סטטוס</label>
+        <select id="fStatus">
+          <option value="todo">לביצוע</option>
+          <option value="inprogress">בתהליך</option>
+          <option value="done">הושלם</option>
+          <option value="blocked">חסום</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label>עדיפות</label>
+        <select id="fPriority">
+          <option value="low">נמוך</option>
+          <option value="medium" selected>בינוני</option>
+          <option value="high">גבוה</option>
+          <option value="urgent">דחוף</option>
+        </select>
+      </div>
+      <div class="form-group" style="flex:1">
+        <label>אחראי</label>
+        <select id="fOwner">
+          <option value="">—</option>
+          <option value="תמר">תמר</option>
+          <option value="רועי">רועי</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>תאריך יעד</label>
+      <input type="date" id="fDeadline">
+    </div>
+    <div class="subtask-section" id="subtaskSection">
+      <div class="subtask-section-header">תתי-משימות</div>
+      <div id="subtaskTree"></div>
+      <div class="sub-add-row">
+        <input class="inline-input" id="rootSubInput" placeholder="הוסף תת-משימה..." style="flex:2" onkeydown="if(event.key==='Enter')addSubModal('')">
+        <input class="inline-input" id="rootSubEffort" placeholder="ימים" style="width:50px;flex:none" onkeydown="if(event.key==='Enter')addSubModal('')">
+        <input class="inline-input" id="rootSubNote" placeholder="הערה" style="flex:1" onkeydown="if(event.key==='Enter')addSubModal('')">
+        <button class="btn btn-primary btn-sm" onclick="addSubModal('')">הוסף</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">ביטול</button>
+      <button class="btn btn-primary" onclick="saveTask()">שמור משימה</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORE = 'taskDashboard_he_v1';
+const COLS = [
+  { id: 'todo',       label: 'לביצוע',    color: '#8b8fa3' },
+  { id: 'inprogress', label: 'בתהליך',     color: '#4cc2ff' },
+  { id: 'done',       label: 'הושלם',      color: '#4cdf8b' },
+  { id: 'blocked',    label: 'חסום',       color: '#ff6b6b' },
+];
+const PRIO = { urgent: 0, high: 1, medium: 2, low: 3 };
+const STATUS_ORDER = ['todo', 'inprogress', 'review', 'done', 'blocked'];
+const STATUS_STYLES = {
+  todo:       { label: 'לביצוע',    bg: '#2a2d3a', color: '#8b8fa3' },
+  inprogress: { label: 'בתהליך',    bg: '#1a3a5c', color: '#4cc2ff' },
+  review:     { label: 'בבדיקה',    bg: '#3a2a5c', color: '#b18cff' },
+  done:       { label: 'הושלם',     bg: '#1a3a2a', color: '#4cdf8b' },
+  blocked:    { label: 'חסום',      bg: '#3a1a1a', color: '#ff6b6b' },
+};
+function nextStatus(st) {
+  const i = STATUS_ORDER.indexOf(st || 'todo');
+  return STATUS_ORDER[(i + 1) % STATUS_ORDER.length];
+}
+function subStatusSelect(st, cls, onchange) {
+  const cur = st || 'todo';
+  const s = STATUS_STYLES[cur];
+  const opts = STATUS_ORDER.map(k =>
+    `<option value="${k}" ${k===cur?'selected':''}>${STATUS_STYLES[k].label}</option>`
+  ).join('');
+  return `<select class="${cls}" style="background-color:${s.bg};color:${s.color}" onchange="${onchange}">${opts}</select>`;
+}
+
+let tasks = JSON.parse(localStorage.getItem(STORE) || '[]');
+// Assign order to tasks that don't have one
+if (tasks.some(t => t.order == null)) {
+  const byCol = {};
+  tasks.forEach(t => { if (!byCol[t.status]) byCol[t.status] = []; byCol[t.status].push(t); });
+  Object.values(byCol).forEach(list => list.forEach((t, i) => { if (t.order == null) t.order = i; }));
+  save();
+}
+
+let editSubs = []; // subtasks being edited in modal
+let expandedSubs = new Set(); // paths of expanded subtask nodes in modal
+let expandedCards = new Set(); // task IDs with subtask panel open on board
+let expandedCardSubs = new Set(); // paths of expanded inline subtask nodes
+let addingChildAt = null; // "taskId:path" where inline add input is shown
+let editingEffortAt = null; // "taskId:path" where effort input is shown
+let editingNoteAt = null; // "taskId:path" where note input is shown
+let editingTitleAt = null; // "taskId:path" where title input is shown
+
+function save() { localStorage.setItem(STORE, JSON.stringify(tasks)); localStorage.setItem(STORE + '_backup', JSON.stringify(tasks)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+/* ── Subtask helpers: navigate by path string like "0.2.1" ── */
+function getSubByPath(subs, path) {
+  if (!path) return null;
+  const parts = path.split('.').map(Number);
+  let node = subs;
+  for (let i = 0; i < parts.length; i++) {
+    if (!node || !node[parts[i]]) return null;
+    if (i === parts.length - 1) return node[parts[i]];
+    node = node[parts[i]].children || [];
+  }
+  return null;
+}
+function getSubParentList(subs, path) {
+  if (!path) return subs;
+  const parts = path.split('.').map(Number);
+  let node = subs;
+  for (const p of parts) {
+    if (!node[p]) return node;
+    if (!node[p].children) node[p].children = [];
+    node = node[p].children;
+  }
+  return node;
+}
+function countAllSubs(subs) {
+  let c = 0;
+  for (const s of (subs || [])) { c++; c += countAllSubs(s.children); }
+  return c;
+}
+function countDoneSubs(subs) {
+  let c = 0;
+  for (const s of (subs || [])) { if (s.status === 'done' || (!s.status && s.done)) c++; c += countDoneSubs(s.children); }
+  return c;
+}
+function totalEffort(subs) {
+  let e = 0;
+  for (const s of (subs || [])) { if (s.effort) e += s.effort; e += totalEffort(s.children); }
+  return e;
+}
+
+/* ── Deadline ── */
+function dlInfo(d) {
+  if (!d) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dl = new Date(d + 'T00:00:00');
+  const diff = Math.ceil((dl - today) / 86400000);
+  if (diff < 0) return { text: `באיחור ${Math.abs(diff)}d`, cls: 'overdue' };
+  if (diff === 0) return { text: 'היום', cls: 'soon' };
+  if (diff <= 3) return { text: `${diff} ימים`, cls: 'soon' };
+  return { text: dl.toLocaleDateString('he-IL', { month: 'short', day: 'numeric' }), cls: '' };
+}
+
+/* ═══════ RENDER BOARD ═══════ */
+function render() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+
+  // Stats
+  const total = tasks.length;
+  const done = tasks.filter(t => t.status === 'done').length;
+  const overdue = tasks.filter(t => t.deadline && t.status !== 'done' && new Date(t.deadline) < new Date().setHours(0,0,0,0)).length;
+  document.getElementById('statsStrip').innerHTML =
+    `<div class="stat"><b>${total}</b>סה"כ</div>` +
+    `<div class="stat"><b style="color:#4cdf8b">${done}</b>הושלמו</div>` +
+    `<div class="stat"><b style="color:#ff6b6b">${overdue}</b>באיחור</div>` +
+    (total ? `<div class="stat"><b style="color:#4cc2ff">${Math.round(done/total*100)}%</b>הושלם</div>` : '');
+
+  // Board
+  document.getElementById('board').innerHTML = COLS.map(col => {
+    let colTasks = tasks.filter(t => t.status === col.id);
+    if (q) colTasks = colTasks.filter(t =>
+      t.title.toLowerCase().includes(q) || (t.desc||'').toLowerCase().includes(q)
+    );
+    colTasks.sort((a,b) => (a.order ?? 9999) - (b.order ?? 9999));
+
+    return `
+    <div class="column col-${col.id}">
+      <div class="column-header">
+        <div class="column-dot"></div>
+        ${col.label}
+        <span class="column-count">${colTasks.length}</span>
+        <button class="column-add" onclick="openModal(null,'${col.id}')" title="הוסף משימה ל-${col.label}">+</button>
+      </div>
+      <div class="column-body" data-status="${col.id}"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        ${colTasks.map(t => renderCard(t)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCard(t) {
+  const dl = dlInfo(t.deadline);
+  const totalSubs = countAllSubs(t.subtasks);
+  const doneSubs = countDoneSubs(t.subtasks);
+  const effortDays = totalEffort(t.subtasks);
+  const isOpen = expandedCards.has(t.id);
+  const hasSubs = totalSubs > 0;
+  return `
+  <div class="task-card" draggable="true" data-id="${t.id}"
+       ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+    <div class="task-top">
+      <div class="priority-dot priority-${t.priority}" title="${t.priority}"></div>
+      <div class="task-info">
+        <div class="task-title">${esc(t.title)}</div>
+        ${t.desc ? `<div class="task-desc">${esc(t.desc)}</div>` : ''}
+      </div>
+    </div>
+    <div class="task-meta">
+      ${t.owner ? `<span class="owner-badge">👤 ${esc(t.owner)}</span>` : ''}
+      ${dl ? `<span class="deadline-badge ${dl.cls}">📅 ${dl.text}</span>` : ''}
+      ${effortDays ? `<span class="deadline-badge">⏱ ${effortDays}d</span>` : ''}
+      ${hasSubs ? `<span class="subtask-count">☑ ${doneSubs}/${totalSubs}</span>` : ''}
+    </div>
+    <div class="card-drilldown" onclick="toggleCardSubs('${t.id}')">
+      <span class="card-drilldown-arrow ${isOpen?'open':''}">◀</span>
+      <span>תתי-משימות${hasSubs ? ` (${doneSubs}/${totalSubs})` : ' (עדיין אין)'}</span>
+    </div>
+    <div class="card-subs ${isOpen?'open':''}">
+      ${renderCardSubNodes(t.id, t.subtasks, '')}
+      <div class="card-add-root">
+        <input id="card-root-${t.id}" placeholder="הוסף תת-משימה..." onkeydown="if(event.key==='Enter')addCardSub('${t.id}','')" onclick="event.stopPropagation()">
+        <button class="btn btn-primary btn-sm" onclick="addCardSub('${t.id}','')">+</button>
+      </div>
+    </div>
+    <div class="task-actions-row">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('${t.id}')" title="עריכה">✏️ עריכה</button>
+      <button class="btn btn-ghost btn-sm" onclick="deleteTask('${t.id}')" title="מחיקה" style="margin-right:auto">🗑️</button>
+    </div>
+  </div>`;
+}
+
+/* ── Inline subtask tree on cards ── */
+function toggleCardSubs(taskId) {
+  if (expandedCards.has(taskId)) expandedCards.delete(taskId);
+  else expandedCards.add(taskId);
+  render();
+}
+
+function renderCardSubNodes(taskId, subs, parentPath) {
+  if (!subs || !subs.length) return '';
+  const sibCount = subs.length;
+  return `<div class="subtree">${subs.map((s, i) => {
+    const path = parentPath ? `${parentPath}.${i}` : `${i}`;
+    const key = `${taskId}:${path}`;
+    const hasKids = s.children && s.children.length > 0;
+    const isOpen = expandedCardSubs.has(key);
+    const showAddChild = addingChildAt === key;
+    const isFirst = i === 0;
+    const isLast = i === sibCount - 1;
+    return `
+      <div>
+        <div class="card-sub-row">
+          <div class="card-sub-toggle ${hasKids ? (isOpen?'open':'') : 'invis'}"
+               onclick="toggleCardSubExp('${taskId}','${path}')">◀</div>
+          ${subStatusSelect(s.status, 'card-sub-status', "setCardSubStatus('"+taskId+"','"+path+"',this.value)")}
+          ${editingTitleAt === key
+            ? `<input class="card-sub-title-input" value="${esc(s.text)}" autofocus
+                 onblur="saveCardSubTitle('${taskId}','${path}',this.value)"
+                 onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){editingTitleAt=null;render()}"
+                 onclick="event.stopPropagation()">`
+            : `<span class="card-sub-text ${(s.status||'todo')==='done'?'done':''}" onclick="startEditTitle('${taskId}','${path}')">${esc(s.text)}</span>`
+          }
+          ${editingEffortAt === key
+            ? `<input class="card-sub-effort-input" value="${s.effort||''}" autofocus
+                 onblur="saveCardSubEffort('${taskId}','${path}',this.value)"
+                 onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){editingEffortAt=null;render()}"
+                 onclick="event.stopPropagation()">`
+            : `<span class="card-sub-effort" onclick="startEditEffort('${taskId}','${path}')">${s.effort ? s.effort+'d' : '⏱'}</span>`
+          }
+          <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
+          <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
+          <button class="card-sub-add-btn" onclick="showAddChild('${taskId}','${path}')" title="הוסף תת-משימה">+</button>
+        </div>
+        <div class="card-sub-note-row">
+          ${editingNoteAt === key
+            ? `<input class="card-sub-note-input" value="${esc(s.note||'')}"
+                 autofocus placeholder="הוסף הערה..."
+                 onblur="saveCardSubNote('${taskId}','${path}',this.value)"
+                 onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){editingNoteAt=null;render()}"
+                 onclick="event.stopPropagation()">`
+            : (s.note
+              ? `<span class="card-sub-note-display" onclick="startEditNote('${taskId}','${path}')">${esc(s.note)}</span>`
+              : `<span class="card-sub-note-placeholder" onclick="startEditNote('${taskId}','${path}')">+ הוסף הערה</span>`)
+          }
+        </div>
+        ${showAddChild ? `
+        <div class="card-sub-inline-add">
+          <input id="card-child-${key}" placeholder="הוסף תת-משימה..." autofocus
+                 onkeydown="if(event.key==='Enter')addCardSub('${taskId}','${path}');if(event.key==='Escape')hideAddChild()"
+                 onclick="event.stopPropagation()">
+          <button class="btn btn-primary btn-sm" onclick="addCardSub('${taskId}','${path}')">+</button>
+        </div>` : ''}
+        ${hasKids ? `<div class="card-sub-children ${isOpen?'open':''}">${renderCardSubNodes(taskId, s.children, path)}</div>` : ''}
+      </div>`;
+  }).join('')}</div>`;
+}
+
+function showAddChild(taskId, path) {
+  addingChildAt = `${taskId}:${path}`;
+  expandedCardSubs.add(`${taskId}:${path}`);
+  render();
+  setTimeout(() => {
+    const el = document.getElementById(`card-child-${taskId}:${path}`);
+    if (el) el.focus();
+  }, 20);
+}
+
+function hideAddChild() {
+  addingChildAt = null;
+  render();
+}
+
+function addCardSub(taskId, parentPath) {
+  let inputId;
+  if (parentPath) {
+    inputId = `card-child-${taskId}:${parentPath}`;
+  } else {
+    inputId = `card-root-${taskId}`;
+  }
+  const input = document.getElementById(inputId);
+  const text = input?.value.trim();
+  if (!text) return;
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  if (!t.subtasks) t.subtasks = [];
+
+  if (parentPath) {
+    const parent = getSubByPath(t.subtasks, parentPath);
+    if (parent) {
+      if (!parent.children) parent.children = [];
+      parent.children.push({ text, done: false, status: 'todo', children: [] });
+      expandedCardSubs.add(`${taskId}:${parentPath}`);
+    }
+  } else {
+    t.subtasks.push({ text, done: false, status: 'todo', children: [] });
+  }
+  addingChildAt = null;
+  save(); render();
+  // Re-expand and focus root input
+  setTimeout(() => {
+    expandedCards.add(taskId);
+    const rootInput = document.getElementById(`card-root-${taskId}`);
+    if (rootInput && !parentPath) rootInput.focus();
+  }, 20);
+}
+
+function toggleCardSubExp(taskId, path) {
+  const key = `${taskId}:${path}`;
+  if (expandedCardSubs.has(key)) expandedCardSubs.delete(key);
+  else expandedCardSubs.add(key);
+  render();
+}
+
+function setCardSubStatus(taskId, path, newStatus) {
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const s = getSubByPath(t.subtasks, path);
+  if (s) {
+    s.status = newStatus;
+    s.done = newStatus === 'done';
+    save(); render();
+  }
+}
+
+function startEditEffort(taskId, path) {
+  editingEffortAt = `${taskId}:${path}`;
+  render();
+  setTimeout(() => {
+    const el = document.querySelector('.card-sub-effort-input');
+    if (el) { el.focus(); el.select(); }
+  }, 20);
+}
+
+function saveCardSubEffort(taskId, path, val) {
+  editingEffortAt = null;
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const s = getSubByPath(t.subtasks, path);
+  if (s) {
+    const n = parseFloat(val);
+    s.effort = (n > 0) ? n : null;
+    save();
+  }
+  render();
+}
+
+function startEditNote(taskId, path) {
+  editingNoteAt = `${taskId}:${path}`;
+  render();
+  setTimeout(() => {
+    const el = document.querySelector('.card-sub-note-input');
+    if (el) { el.focus(); el.select(); }
+  }, 20);
+}
+
+function saveCardSubNote(taskId, path, val) {
+  editingNoteAt = null;
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const s = getSubByPath(t.subtasks, path);
+  if (s) {
+    s.note = val.trim() || null;
+    save();
+  }
+  render();
+}
+
+function startEditTitle(taskId, path) {
+  editingTitleAt = `${taskId}:${path}`;
+  render();
+  setTimeout(() => {
+    const el = document.querySelector('.card-sub-title-input');
+    if (el) { el.focus(); el.select(); }
+  }, 20);
+}
+
+function saveCardSubTitle(taskId, path, val) {
+  editingTitleAt = null;
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const s = getSubByPath(t.subtasks, path);
+  if (s) {
+    const trimmed = val.trim();
+    if (trimmed) s.text = trimmed;
+    save();
+  }
+  render();
+}
+
+function reorderCardSub(taskId, path, dir) {
+  const t = tasks.find(x => x.id === taskId);
+  if (!t || !t.subtasks) return;
+  const parts = path.split('.').map(Number);
+  const idx = parts.pop();
+  let list = t.subtasks;
+  for (const p of parts) {
+    if (!list[p] || !list[p].children) return;
+    list = list[p].children;
+  }
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= list.length) return;
+  // Swap
+  [list[idx], list[newIdx]] = [list[newIdx], list[idx]];
+  // Update expanded keys that referenced old indices
+  const prefix = parts.length ? parts.join('.') + '.' : '';
+  const oldKey = `${taskId}:${prefix}${idx}`;
+  const newKey = `${taskId}:${prefix}${newIdx}`;
+  const swapInSet = (set) => {
+    const hadOld = set.has(oldKey);
+    const hadNew = set.has(newKey);
+    if (hadOld && !hadNew) { set.delete(oldKey); set.add(newKey); }
+    else if (hadNew && !hadOld) { set.delete(newKey); set.add(oldKey); }
+  };
+  swapInSet(expandedCardSubs);
+  save(); render();
+}
+
+/* ═══════ DRAG & DROP (tasks) ═══════ */
+let dragId = null;
+function onDragStart(e) {
+  dragId = e.currentTarget.dataset.id;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragId);
+}
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  dragId = null;
+  document.querySelectorAll('.drop-above,.drop-below,.drag-over').forEach(el => el.classList.remove('drop-above','drop-below','drag-over'));
+}
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const col = e.currentTarget;
+  col.classList.add('drag-over');
+  // Show drop indicator on nearest card
+  const cards = [...col.querySelectorAll('.task-card:not(.dragging)')];
+  cards.forEach(c => c.classList.remove('drop-above','drop-below'));
+  if (!cards.length) return;
+  let target = null;
+  for (const c of cards) {
+    const r = c.getBoundingClientRect();
+    if (e.clientY < r.top + r.height / 2) { target = c; break; }
+  }
+  if (target) target.classList.add('drop-above');
+  else cards[cards.length - 1].classList.add('drop-below');
+}
+function onDragLeave(e) {
+  // Only clear when truly leaving the column-body (not entering a child)
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('drag-over');
+    e.currentTarget.querySelectorAll('.drop-above,.drop-below').forEach(el => el.classList.remove('drop-above','drop-below'));
+  }
+}
+function onDrop(e) {
+  e.preventDefault();
+  const col = e.currentTarget;
+  col.classList.remove('drag-over');
+  col.querySelectorAll('.drop-above,.drop-below').forEach(el => el.classList.remove('drop-above','drop-below'));
+  const newStatus = col.dataset.status;
+  if (!dragId || !newStatus) { dragId = null; return; }
+  const t = tasks.find(x => x.id === dragId);
+  if (!t) { dragId = null; return; }
+
+  // Determine insert position
+  const cards = [...col.querySelectorAll('.task-card:not(.dragging)')];
+  let insertBeforeId = null;
+  for (const c of cards) {
+    const r = c.getBoundingClientRect();
+    if (e.clientY < r.top + r.height / 2) { insertBeforeId = c.dataset.id; break; }
+  }
+
+  t.status = newStatus;
+  // Recalculate order for all tasks in the target column
+  const colTasks = tasks.filter(x => x.status === newStatus && x.id !== dragId);
+  colTasks.sort((a,b) => (a.order ?? 9999) - (b.order ?? 9999));
+  const ordered = [];
+  let inserted = false;
+  for (const ct of colTasks) {
+    if (ct.id === insertBeforeId) { ordered.push(t); inserted = true; }
+    ordered.push(ct);
+  }
+  if (!inserted) ordered.push(t);
+  ordered.forEach((x, i) => x.order = i);
+
+  save(); render();
+  dragId = null;
+}
+
+/* ═══════ MODAL ═══════ */
+function openModal(editId, defaultStatus) {
+  expandedSubs = new Set();
+  if (editId) {
+    const t = tasks.find(x => x.id === editId);
+    if (!t) return;
+    document.getElementById('modalTitle').textContent = 'עריכת משימה';
+    document.getElementById('editId').value = editId;
+    document.getElementById('fTitle').value = t.title;
+    document.getElementById('fDesc').value = t.desc || '';
+    document.getElementById('fStatus').value = t.status;
+    document.getElementById('fPriority').value = t.priority;
+    document.getElementById('fDeadline').value = t.deadline || '';
+    document.getElementById('fOwner').value = t.owner || '';
+    editSubs = JSON.parse(JSON.stringify(t.subtasks || []));
+  } else {
+    document.getElementById('modalTitle').textContent = 'משימה חדשה';
+    document.getElementById('editId').value = '';
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fStatus').value = defaultStatus || 'todo';
+    document.getElementById('fPriority').value = 'medium';
+    document.getElementById('fDeadline').value = '';
+    document.getElementById('fOwner').value = '';
+    editSubs = [];
+  }
+  renderSubtaskTree();
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('fTitle').focus(), 100);
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function saveTask() {
+  const title = document.getElementById('fTitle').value.trim();
+  if (!title) { document.getElementById('fTitle').focus(); return; }
+  const editId = document.getElementById('editId').value;
+  if (editId) {
+    const t = tasks.find(x => x.id === editId);
+    if (t) {
+      const oldStatus = t.status;
+      t.title = title;
+      t.desc = document.getElementById('fDesc').value.trim();
+      t.status = document.getElementById('fStatus').value;
+      t.priority = document.getElementById('fPriority').value;
+      t.deadline = document.getElementById('fDeadline').value || null;
+      t.owner = document.getElementById('fOwner').value || null;
+      t.subtasks = editSubs;
+      if (t.status !== oldStatus) {
+        const maxOrder = tasks.filter(x => x.status === t.status && x.id !== t.id).reduce((m, x) => Math.max(m, x.order ?? 0), -1);
+        t.order = maxOrder + 1;
+      }
+    }
+  } else {
+    const status = document.getElementById('fStatus').value;
+    const maxOrder = tasks.filter(x => x.status === status).reduce((m, x) => Math.max(m, x.order ?? 0), -1);
+    tasks.push({
+      id: uid(), title,
+      desc: document.getElementById('fDesc').value.trim(),
+      status,
+      priority: document.getElementById('fPriority').value,
+      deadline: document.getElementById('fDeadline').value || null,
+      owner: document.getElementById('fOwner').value || null,
+      subtasks: editSubs, created: Date.now(),
+      order: maxOrder + 1,
+    });
+  }
+  save(); closeModal(); render();
+}
+
+function deleteTask(id) {
+  if (!confirm('למחוק את המשימה?')) return;
+  tasks = tasks.filter(t => t.id !== id);
+  save(); render();
+}
+
+/* ═══════ SUBTASK TREE (in modal) ═══════ */
+function renderSubtaskTree() {
+  document.getElementById('subtaskTree').innerHTML = renderSubNodes(editSubs, '');
+}
+
+function renderSubNodes(subs, parentPath) {
+  if (!subs || !subs.length) return '';
+  return `<div class="subtree">${subs.map((s, i) => {
+    const path = parentPath ? `${parentPath}.${i}` : `${i}`;
+    const hasKids = s.children && s.children.length > 0;
+    const isOpen = expandedSubs.has(path);
+    return `
+      <div>
+        <div class="sub-row">
+          <button class="sub-toggle ${hasKids ? (isOpen ? 'open' : '') : 'invis'}"
+                  onclick="toggleSubExp('${path}')">◀</button>
+          ${subStatusSelect(s.status, 'sub-status', "setSubStatus('"+path+"',this.value)")}
+          <span class="sub-text ${(s.status||'todo')==='done'?'done':''}">${esc(s.text)}</span>
+          ${s.effort ? `<span class="sub-effort">${s.effort}d</span>` : ''}
+          ${s.note ? `<span class="sub-note" title="${esc(s.note)}">${esc(s.note)}</span>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="delSub('${path}')" style="font-size:.7rem">✕</button>
+        </div>
+        <div class="sub-children ${isOpen?'open':''}">
+          ${hasKids ? renderSubNodes(s.children, path) : ''}
+          <div class="sub-add-row" style="margin-right:28px">
+            <input class="inline-input" id="subi-${path}" placeholder="הוסף תת-משימה..." style="flex:2"
+                   onkeydown="if(event.key==='Enter')addSubModal('${path}')">
+            <input class="inline-input" id="subi-eff-${path}" placeholder="ימים" style="width:50px;flex:none"
+                   onkeydown="if(event.key==='Enter')addSubModal('${path}')">
+            <input class="inline-input" id="subi-note-${path}" placeholder="הערה" style="flex:1"
+                   onkeydown="if(event.key==='Enter')addSubModal('${path}')">
+            <button class="btn btn-primary btn-sm" onclick="addSubModal('${path}')">+</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+function toggleSubExp(path) {
+  if (expandedSubs.has(path)) expandedSubs.delete(path);
+  else expandedSubs.add(path);
+  renderSubtaskTree();
+}
+
+function setSubStatus(path, newStatus) {
+  const s = getSubByPath(editSubs, path);
+  if (s) {
+    s.status = newStatus;
+    s.done = newStatus === 'done';
+  }
+  renderSubtaskTree();
+}
+
+function delSub(path) {
+  const parts = path.split('.').map(Number);
+  const idx = parts.pop();
+  let list = editSubs;
+  for (const p of parts) {
+    if (!list[p]) return;
+    if (!list[p].children) list[p].children = [];
+    list = list[p].children;
+  }
+  list.splice(idx, 1);
+  renderSubtaskTree();
+}
+
+function addSubModal(parentPath) {
+  const inputId = parentPath ? `subi-${parentPath}` : 'rootSubInput';
+  const effortId = parentPath ? `subi-eff-${parentPath}` : 'rootSubEffort';
+  const noteId = parentPath ? `subi-note-${parentPath}` : 'rootSubNote';
+  const input = document.getElementById(inputId);
+  const text = input?.value.trim();
+  if (!text) return;
+  const effort = parseFloat(document.getElementById(effortId)?.value) || null;
+  const note = document.getElementById(noteId)?.value.trim() || null;
+  if (parentPath) {
+    const parent = getSubByPath(editSubs, parentPath);
+    if (parent) {
+      if (!parent.children) parent.children = [];
+      parent.children.push({ text, done: false, status: 'todo', children: [], effort, note });
+      expandedSubs.add(parentPath);
+    }
+  } else {
+    editSubs.push({ text, done: false, status: 'todo', children: [], effort, note });
+  }
+  renderSubtaskTree();
+  setTimeout(() => {
+    const el = document.getElementById(inputId);
+    if (el) { el.value = ''; el.focus(); }
+  }, 20);
+}
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'n' && !e.ctrlKey && !e.metaKey && document.activeElement === document.body) openModal();
+});
+
+/* ── Cloud Sync ── */
+const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/019d96ca-9bad-71c0-98ad-d76110101a02';
+
+function setSyncStatus(text, cls) {
+  const btn = document.getElementById('syncBtn');
+  const status = document.getElementById('syncStatus');
+  btn.className = 'sync-btn' + (cls ? ' ' + cls : '');
+  status.textContent = text;
+}
+
+async function cloudSave() {
+  setSyncStatus('שומר...', 'saving');
+  try {
+    const resp = await fetch(CLOUD_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(tasks)
+    });
+    if (!resp.ok) throw new Error(resp.status);
+    save(); // also save locally
+    const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+    setSyncStatus('נשמר ' + now, '');
+  } catch(e) {
+    setSyncStatus('שגיאה בשמירה', 'error');
+    console.error('Cloud save error:', e);
+  }
+}
+
+async function cloudLoad() {
+  setSyncStatus('טוען...', 'saving');
+  try {
+    const resp = await fetch(CLOUD_URL);
+    if (!resp.ok) throw new Error(resp.status);
+    const data = await resp.json();
+    if (Array.isArray(data) && data.length > 0) {
+      tasks = data;
+      save();
+      render();
+    }
+    const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+    setSyncStatus('נטען ' + now, '');
+  } catch(e) {
+    setSyncStatus('', '');
+    console.error('Cloud load error:', e);
+  }
+}
+
+/* ── Safety saves ── */
+window.addEventListener('beforeunload', () => save());
+setInterval(() => save(), 10000);
+
+// Recover from backup if main store lost data
+(function() {
+  const bk = localStorage.getItem(STORE + '_backup');
+  if (bk) {
+    try {
+      const bkTasks = JSON.parse(bk);
+      if (Array.isArray(bkTasks) && bkTasks.length > tasks.length) {
+        tasks = bkTasks; save();
+      }
+    } catch(e) {}
+  }
+})();
+
+// Load from cloud on startup
+cloudLoad();
+
+render();
+</script>
+</body>
+</html>
