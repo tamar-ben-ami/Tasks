@@ -1,0 +1,43 @@
+[
+  {
+    "id": "mo1nj2oyuyfyj",
+    "title": "דירה 1",
+    "desc": "",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": null,
+    "owner": null,
+    "subtasks": [
+      {
+        "text": "מציאת דירה",
+        "done": false,
+        "status": "inprogress",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": "שנינו"
+      },
+      {
+        "text": "בניית תמהיל טיוטה",
+        "done": false,
+        "status": "inprogress",
+        "children": [],
+        "owner": "תמר"
+      },
+      {
+        "text": "בחירת עורך דין",
+        "done": false,
+        "status": "todo",
+        "children": []
+      },
+      {
+        "text": "בחירת יועץ משכנתא",
+        "done": false,
+        "status": "todo",
+        "children": []
+      }
+    ],
+    "created": 1776354373474,
+    "order": 0
+  }
+]
