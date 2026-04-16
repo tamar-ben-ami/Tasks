@@ -170,6 +170,7 @@
   .card-subs .subtree { margin-right: 0; }
   .card-subs .subtree .subtree { margin-right: 10px; border-right: 2px solid var(--border); padding-right: 6px; margin-left: 0; border-left: none; padding-left: 0; }
   .card-sub-row { display: flex; align-items: center; gap: 4px; padding: 3px 0; font-size: .8rem; position: relative; }
+  .card-sub-title-row { display: flex; align-items: center; gap: 4px; padding: 5px 0 1px; font-size: .8rem; position: relative; }
   .card-sub-toggle {
     width: 12px; height: 12px; display: flex; align-items: center; justify-content: center;
     font-size: .45rem; color: var(--text-dim); cursor: pointer; flex-shrink: 0;
@@ -236,7 +237,9 @@
     flex-shrink: 0; opacity: 0; transition: opacity .15s;
   }
   .card-sub-row:hover .card-sub-add-btn,
-  .card-sub-row:hover .card-sub-reorder-btn { opacity: 1; }
+  .card-sub-row:hover .card-sub-reorder-btn,
+  .card-sub-meta-row:hover .card-sub-add-btn,
+  .card-sub-meta-row:hover .card-sub-reorder-btn { opacity: 1; }
   .card-sub-add-btn:hover, .card-sub-reorder-btn:hover { background: var(--accent); color: #fff; opacity: 1; }
   .card-sub-reorder-btn { font-size: .6rem; }
   .card-sub-reorder-btn.disabled { opacity: 0 !important; cursor: default; pointer-events: none; }
@@ -665,10 +668,9 @@ function renderCardSubNodes(taskId, subs, parentPath) {
     const isLast = i === sibCount - 1;
     return `
       <div>
-        <div class="card-sub-row">
+        <div class="card-sub-title-row">
           <div class="card-sub-toggle ${hasKids ? (isOpen?'open':'') : 'invis'}"
                onclick="toggleCardSubExp('${taskId}','${path}')">◀</div>
-          ${subStatusSelect(s.status, 'card-sub-status', "setCardSubStatus('"+taskId+"','"+path+"',this.value)")}
           ${editingTitleAt === key
             ? `<input class="card-sub-title-input" value="${esc(s.text)}" autofocus
                  onblur="saveCardSubTitle('${taskId}','${path}',this.value)"
@@ -676,11 +678,9 @@ function renderCardSubNodes(taskId, subs, parentPath) {
                  onclick="event.stopPropagation()">`
             : `<span class="card-sub-text ${(s.status||'todo')==='done'?'done':''}" onclick="startEditTitle('${taskId}','${path}')">${esc(s.text)}</span>`
           }
-          <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
-          <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
-          <button class="card-sub-add-btn" onclick="showAddChild('${taskId}','${path}')" title="הוסף תת-משימה">+</button>
         </div>
         <div class="card-sub-meta-row">
+          ${subStatusSelect(s.status, 'card-sub-status', "setCardSubStatus('"+taskId+"','"+path+"',this.value)")}
           ${editingEffortAt === key
             ? `<input class="card-sub-effort-input" value="${s.effort||''}" autofocus
                  onblur="saveCardSubEffort('${taskId}','${path}',this.value)"
@@ -693,6 +693,9 @@ function renderCardSubNodes(taskId, subs, parentPath) {
             <option value="תמר" ${(s.owner||'')==='תמר'?'selected':''}>תמר</option>
             <option value="רועי" ${(s.owner||'')==='רועי'?'selected':''}>רועי</option>
           </select>
+          <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
+          <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
+          <button class="card-sub-add-btn" onclick="showAddChild('${taskId}','${path}')" title="הוסף תת-משימה">+</button>
         </div>
         <div class="card-sub-note-row">
           ${editingNoteAt === key
