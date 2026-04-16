@@ -442,6 +442,7 @@
           <option value="">—</option>
           <option value="תמר">תמר</option>
           <option value="רועי">רועי</option>
+          <option value="שנינו">שנינו</option>
         </select>
       </div>
     </div>
@@ -692,6 +693,7 @@ function renderCardSubNodes(taskId, subs, parentPath) {
             <option value="">👤</option>
             <option value="תמר" ${(s.owner||'')==='תמר'?'selected':''}>תמר</option>
             <option value="רועי" ${(s.owner||'')==='רועי'?'selected':''}>רועי</option>
+            <option value="שנינו" ${(s.owner||'')==='שנינו'?'selected':''}>שנינו</option>
           </select>
           <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
           <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
