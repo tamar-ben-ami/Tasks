@@ -204,6 +204,10 @@
   .card-sub-note-row {
     padding: 0 28px 2px 0; font-size: .72rem;
   }
+  .card-sub-meta-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 28px 2px 0; font-size: .72rem;
+  }
   .card-sub-note-display {
     color: var(--text-dim); font-style: italic; cursor: pointer;
     padding: 1px 4px; border-radius: 4px; border: 1px solid transparent;
@@ -672,6 +676,11 @@ function renderCardSubNodes(taskId, subs, parentPath) {
                  onclick="event.stopPropagation()">`
             : `<span class="card-sub-text ${(s.status||'todo')==='done'?'done':''}" onclick="startEditTitle('${taskId}','${path}')">${esc(s.text)}</span>`
           }
+          <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
+          <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
+          <button class="card-sub-add-btn" onclick="showAddChild('${taskId}','${path}')" title="הוסף תת-משימה">+</button>
+        </div>
+        <div class="card-sub-meta-row">
           ${editingEffortAt === key
             ? `<input class="card-sub-effort-input" value="${s.effort||''}" autofocus
                  onblur="saveCardSubEffort('${taskId}','${path}',this.value)"
@@ -684,9 +693,6 @@ function renderCardSubNodes(taskId, subs, parentPath) {
             <option value="תמר" ${(s.owner||'')==='תמר'?'selected':''}>תמר</option>
             <option value="רועי" ${(s.owner||'')==='רועי'?'selected':''}>רועי</option>
           </select>
-          <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
-          <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
-          <button class="card-sub-add-btn" onclick="showAddChild('${taskId}','${path}')" title="הוסף תת-משימה">+</button>
         </div>
         <div class="card-sub-note-row">
           ${editingNoteAt === key
