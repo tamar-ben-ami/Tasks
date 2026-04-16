@@ -1108,7 +1108,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* ── Cloud Sync ── */
-const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/019d96ca-9bad-71c0-98ad-d76110101a02';
+const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/019d96f7-b6c4-74e3-80b1-1e2fe60d22ab';
 
 function setSyncStatus(text, cls) {
   const btn = document.getElementById('syncBtn');
@@ -1119,35 +1119,40 @@ function setSyncStatus(text, cls) {
 
 async function cloudSave() {
   setSyncStatus('שומר...', 'saving');
+  save(); // always save locally first
   try {
     const resp = await fetch(CLOUD_URL, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(tasks)
     });
-    if (!resp.ok) throw new Error(resp.status);
-    save(); // also save locally
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
-    setSyncStatus('נשמר ' + now, '');
+    setSyncStatus('נשמר ☁️ ' + now, '');
   } catch(e) {
-    setSyncStatus('שגיאה בשמירה', 'error');
+    setSyncStatus('נשמר מקומית ⚠️', 'error');
     console.error('Cloud save error:', e);
+    alert('שגיאה בשמירה לענן: ' + e.message + '\nהנתונים נשמרו מקומית.');
   }
 }
 
 async function cloudLoad() {
   setSyncStatus('טוען...', 'saving');
   try {
-    const resp = await fetch(CLOUD_URL);
-    if (!resp.ok) throw new Error(resp.status);
+    const resp = await fetch(CLOUD_URL, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
     if (Array.isArray(data) && data.length > 0) {
       tasks = data;
       save();
       render();
+      const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+      setSyncStatus('נטען ☁️ ' + now, '');
+    } else {
+      setSyncStatus('', '');
     }
-    const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
-    setSyncStatus('נטען ' + now, '');
   } catch(e) {
     setSyncStatus('', '');
     console.error('Cloud load error:', e);
