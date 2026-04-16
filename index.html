@@ -396,6 +396,7 @@
   <div class="header-actions">
     <span class="sync-status" id="syncStatus"></span>
     <button class="sync-btn" id="syncBtn" onclick="cloudSave()" title="שמור לענן">💾 שמור</button>
+    <button class="sync-btn" onclick="cloudLoad()" title="טען מהענן" style="background:#1a2a3a;color:#4cc2ff;">🔄 טען</button>
     <input type="text" class="search-box" id="searchBox" placeholder="חיפוש משימות..." oninput="render()">
     <button class="btn btn-primary" onclick="openModal()">＋ משימה חדשה</button>
   </div>
@@ -1224,13 +1225,11 @@ async function cloudLoad() {
       tasks = data;
       save();
       render();
-      const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
-      setSyncStatus('נטען ☁️ ' + now, '');
-    } else {
-      setSyncStatus('', '');
     }
+    const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+    setSyncStatus('נטען ☁️ ' + now, '');
   } catch(e) {
-    setSyncStatus('', '');
+    setSyncStatus('מקומי בלבד ⚠️', '');
     console.error('Cloud load error:', e);
   }
 }
