@@ -35,6 +35,12 @@
         "done": false,
         "status": "todo",
         "children": []
+      },
+      {
+        "text": "למצוא קבלן",
+        "done": false,
+        "status": "todo",
+        "children": []
       }
     ],
     "created": 1776354373474,
