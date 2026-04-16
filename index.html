@@ -359,6 +359,12 @@
     font-size: .72rem; padding: 2px 8px; border-radius: 6px;
     background: #2a1a3a; color: #b18cff; font-weight: 500;
   }
+  .card-sub-owner {
+    font-size: .68rem; padding: 1px 4px; border-radius: 4px;
+    background: #2a1a3a; color: #b18cff; border: 1px solid #3a2a4a;
+    cursor: pointer; min-width: 40px;
+  }
+  .card-sub-owner:focus { outline: 1px solid #b18cff; }
   .sync-btn {
     padding: 6px 14px; border: none; border-radius: 8px;
     font-size: .82rem; font-weight: 500; cursor: pointer;
@@ -673,6 +679,11 @@ function renderCardSubNodes(taskId, subs, parentPath) {
                  onclick="event.stopPropagation()">`
             : `<span class="card-sub-effort" onclick="startEditEffort('${taskId}','${path}')">${s.effort ? s.effort+'d' : '⏱'}</span>`
           }
+          <select class="card-sub-owner" onchange="setCardSubOwner('${taskId}','${path}',this.value)" title="אחראי">
+            <option value="">👤</option>
+            <option value="תמר" ${(s.owner||'')==='תמר'?'selected':''}>תמר</option>
+            <option value="רועי" ${(s.owner||'')==='רועי'?'selected':''}>רועי</option>
+          </select>
           <button class="card-sub-reorder-btn ${isFirst?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',-1)" title="הזז למעלה">▲</button>
           <button class="card-sub-reorder-btn ${isLast?'disabled':''}" onclick="reorderCardSub('${taskId}','${path}',1)" title="הזז למטה">▼</button>
           <button class="card-sub-add-btn" onclick="showAddChild('${taskId}','${path}')" title="הוסף תת-משימה">+</button>
@@ -764,6 +775,16 @@ function setCardSubStatus(taskId, path, newStatus) {
   if (s) {
     s.status = newStatus;
     s.done = newStatus === 'done';
+    save(); render();
+  }
+}
+
+function setCardSubOwner(taskId, path, owner) {
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const s = getSubByPath(t.subtasks, path);
+  if (s) {
+    s.owner = owner || null;
     save(); render();
   }
 }
