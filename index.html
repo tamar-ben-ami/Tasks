@@ -1139,8 +1139,28 @@ document.addEventListener('keydown', e => {
   if (e.key === 'n' && !e.ctrlKey && !e.metaKey && document.activeElement === document.body) openModal();
 });
 
-/* ── Cloud Sync ── */
-const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/019d96f7-b6c4-74e3-80b1-1e2fe60d22ab';
+/* ── Cloud Sync via GitHub API ── */
+const GH_REPO = 'tamar-ben-ami/Tasks';
+const GH_FILE = 'data.json';
+const GH_API = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+const GH_TOKEN_KEY = 'taskDashboard_gh_token';
+
+function getGhToken() {
+  let token = localStorage.getItem(GH_TOKEN_KEY);
+  if (!token) {
+    token = prompt('הזן GitHub Personal Access Token לסנכרון:');
+    if (token) localStorage.setItem(GH_TOKEN_KEY, token.trim());
+  }
+  return token;
+}
+
+function getGhHeaders() {
+  const token = getGhToken();
+  if (!token) return null;
+  return { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+}
+
+let fileSha = null;
 
 function setSyncStatus(text, cls) {
   const btn = document.getElementById('syncBtn');
@@ -1150,18 +1170,38 @@ function setSyncStatus(text, cls) {
 }
 
 async function cloudSave() {
+  const headers = getGhHeaders();
+  if (!headers) return;
   setSyncStatus('שומר...', 'saving');
-  save(); // always save locally first
+  save();
   try {
-    const resp = await fetch(CLOUD_URL, {
+    if (!fileSha) {
+      try {
+        const getResp = await fetch(GH_API, { headers });
+        if (getResp.ok) {
+          const meta = await getResp.json();
+          fileSha = meta.sha;
+        }
+      } catch(e) { /* file may not exist yet */ }
+    }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(tasks, null, 2))));
+    const body = { message: 'sync tasks', content };
+    if (fileSha) body.sha = fileSha;
+    const resp = await fetch(GH_API, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(tasks)
+      headers,
+      body: JSON.stringify(body)
     });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.message || 'HTTP ' + resp.status);
+    }
+    const result = await resp.json();
+    fileSha = result.content.sha;
     const now = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
     setSyncStatus('נשמר ☁️ ' + now, '');
   } catch(e) {
+    fileSha = null;
     setSyncStatus('נשמר מקומית ⚠️', 'error');
     console.error('Cloud save error:', e);
     alert('שגיאה בשמירה לענן: ' + e.message + '\nהנתונים נשמרו מקומית.');
@@ -1169,13 +1209,17 @@ async function cloudSave() {
 }
 
 async function cloudLoad() {
+  const headers = getGhHeaders();
+  if (!headers) return;
   setSyncStatus('טוען...', 'saving');
   try {
-    const resp = await fetch(CLOUD_URL, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await fetch(GH_API, { headers });
+    if (resp.status === 404) { setSyncStatus('', ''); return; }
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
+    const meta = await resp.json();
+    fileSha = meta.sha;
+    const decoded = decodeURIComponent(escape(atob(meta.content.replace(/\n/g, ''))));
+    const data = JSON.parse(decoded);
     if (Array.isArray(data) && data.length > 0) {
       tasks = data;
       save();
