@@ -7,9 +7,12 @@ The nice things, which still need planning to actually happen.
 Put these in a calendar with a reminder a week ahead — this file is the backup,
 not the alarm.
 
-| Who | Date | Occasion |
+| Who | Next | Occasion |
 | --- | --- | --- |
 | | | |
+
+Dates here use `MM-DD` (no year) so they recur every year — `03-14` for the
+14th of March.
 
 ## Gift ideas
 

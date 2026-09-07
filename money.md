@@ -45,6 +45,6 @@ The single highest-return audit on this page. Review it twice a year.
 
 Known costs on the horizon, so they don't arrive as a surprise.
 
-| What | When | Rough cost | Saved so far |
+| What | Due | Rough cost | Saved so far |
 | --- | --- | --- | --- |
 | | | | |

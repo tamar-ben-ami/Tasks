@@ -25,9 +25,9 @@ Nothing here is ever "done" — reset the boxes when a cycle comes around.
 
 ## Annually
 
-Roughly when each falls due — fill in the month once you know it.
+Fill in `Next` as `YYYY-MM` once you know roughly when each falls due.
 
-| What | Month | List |
+| What | Next | List |
 | --- | --- | --- |
 | Insurance review — all policies | | [insurance.md](insurance.md) |
 | Car test (roadworthiness) | | [car.md](car.md) |
