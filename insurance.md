@@ -12,11 +12,24 @@ repo. See the note at the bottom.
 | Health | | | | |
 | Home — building | | | | |
 | Home — contents | | | | |
-| Car — mandatory | | | | See [car.md](car.md) |
-| Car — comprehensive | | | | |
+| Car — mandatory (חובה) | Clal | | | Booklet only — certificate not supplied. See [car.md](car.md) |
+| Car — third party (צד ג׳) | Clal | 2027-03-01 | ~149 | ₪1,790/yr by standing order. **No own-damage cover** |
 | Life | | | | |
 | Mortgage | | | | Required by the lender |
 | Travel | | | | Often already covered by a credit card |
+
+### Car — third party, key terms
+
+From the Clal renewal schedule dated 2026-02-06. Cover runs 2026-03-01 →
+2027-02-28 on the Honda Jazz.
+
+- **Not comprehensive.** Chapter A (own damage) was excluded at your request —
+  damage to your own car isn't covered, only damage you cause to others.
+- Third-party property limit: ₪1,000,000
+- Excess on a third-party property claim: ₪1,239
+- Criminal legal defence: up to ₪15,000, excess ₪350
+- **Drivers under 24, or with under 48 months' experience in this vehicle type,
+  are not covered.** Worth knowing before lending the car.
 
 ## Annual review
 

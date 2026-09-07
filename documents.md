@@ -12,7 +12,7 @@ The whole reason this file exists: nothing here should ever expire by surprise.
 | Passport | | | |
 | ID card | | | |
 | Driver's licence | | | |
-| Vehicle registration | | | |
+| Vehicle registration | | | Tracked in [car.md](car.md) |
 
 - [ ] Check every expiry date above once a year
 - [ ] Start passport renewal ~9 months before it expires — many countries
