@@ -147,6 +147,27 @@
   .subtask-count {
     font-size: .72rem; color: var(--text-dim); margin-right: auto;
   }
+  .category-badge {
+    font-size: .72rem; padding: 2px 8px; border-radius: 6px;
+    background: var(--surface); font-weight: 600;
+  }
+
+  /* ── Category filter strip ── */
+  .filter-strip {
+    display: flex; gap: 8px; padding: 10px 28px; background: var(--surface);
+    border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
+  }
+  .filter-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 14px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text-dim); font-size: .78rem; font-family: inherit;
+    transition: .15s;
+  }
+  .filter-chip:hover { color: var(--text); border-color: var(--accent); }
+  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-chip.empty { opacity: .45; }
+  .filter-chip b { font-size: .72rem; opacity: .75; font-weight: 600; }
 
   /* ── Drilldown toggle ── */
   .card-drilldown {
@@ -402,6 +423,7 @@
   </div>
 </header>
 <div class="stats-strip" id="statsStrip"></div>
+<div class="filter-strip" id="filterStrip"></div>
 
 <div class="board" id="board"></div>
 
@@ -417,6 +439,10 @@
     <div class="form-group">
       <label>תיאור</label>
       <textarea id="fDesc" placeholder="פרטים נוספים..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>תחום</label>
+      <select id="fCategory"></select>
     </div>
     <div style="display:flex;gap:12px">
       <div class="form-group" style="flex:1">
@@ -470,6 +496,7 @@
 
 <script>
 const STORE = 'taskDashboard_he_v1';
+const CAT_KEY = 'taskDashboard_he_v1_category';
 const COLS = [
   { id: 'todo',       label: 'לביצוע',    color: '#8b8fa3' },
   { id: 'inprogress', label: 'בתהליך',     color: '#4cc2ff' },
@@ -477,6 +504,22 @@ const COLS = [
   { id: 'blocked',    label: 'חסום',       color: '#ff6b6b' },
 ];
 const PRIO = { urgent: 0, high: 1, medium: 2, low: 3 };
+
+/* ═══════ LIFE CATEGORIES ═══════ */
+const CATEGORIES = [
+  { id: 'home',      label: 'בית ודירה',   emoji: '🏠', color: '#4cc2ff' },
+  { id: 'insurance', label: 'ביטוחים',     emoji: '🛡️', color: '#b18cff' },
+  { id: 'shopping',  label: 'קניות',       emoji: '🛒', color: '#4cdf8b' },
+  { id: 'money',     label: 'כספים',       emoji: '💰', color: '#ffc53d' },
+  { id: 'health',    label: 'בריאות',      emoji: '🩺', color: '#ff6b9d' },
+  { id: 'car',       label: 'רכב',         emoji: '🚗', color: '#ff9f5a' },
+  { id: 'docs',      label: 'בירוקרטיה',   emoji: '📄', color: '#9aa0b8' },
+  { id: 'family',    label: 'משפחה ופנאי', emoji: '🎉', color: '#5ad6c8' },
+  { id: 'general',   label: 'כללי',        emoji: '📌', color: '#8b8fa3' },
+];
+const CAT_BY_ID = {};
+CATEGORIES.forEach(c => { CAT_BY_ID[c.id] = c; });
+function catOf(t) { return CAT_BY_ID[t.category] || CAT_BY_ID.general; }
 const STATUS_ORDER = ['todo', 'inprogress', 'review', 'done', 'blocked'];
 const STATUS_STYLES = {
   todo:       { label: 'לביצוע',    bg: '#2a2d3a', color: '#8b8fa3' },
@@ -507,6 +550,7 @@ if (tasks.some(t => t.order == null)) {
   save();
 }
 
+let activeCategory = localStorage.getItem(CAT_KEY) || 'all'; // life-area filter
 let editSubs = []; // subtasks being edited in modal
 let expandedSubs = new Set(); // paths of expanded subtask nodes in modal
 let expandedCards = new Set(); // task IDs with subtask panel open on board
@@ -571,14 +615,52 @@ function dlInfo(d) {
   return { text: dl.toLocaleDateString('he-IL', { month: 'short', day: 'numeric' }), cls: '' };
 }
 
+/* ── Filtering ── */
+function subsMatch(subs, q) {
+  for (const s of (subs || [])) {
+    if ((s.text || '').toLowerCase().includes(q)) return true;
+    if ((s.note || '').toLowerCase().includes(q)) return true;
+    if (subsMatch(s.children, q)) return true;
+  }
+  return false;
+}
+function matchesQuery(t, q) {
+  if (!q) return true;
+  return t.title.toLowerCase().includes(q)
+      || (t.desc || '').toLowerCase().includes(q)
+      || catOf(t).label.toLowerCase().includes(q)
+      || subsMatch(t.subtasks, q);
+}
+function setCategory(id) {
+  activeCategory = id;
+  localStorage.setItem(CAT_KEY, id);
+  render();
+}
+function renderFilters() {
+  const counts = {};
+  tasks.forEach(t => { const c = catOf(t).id; counts[c] = (counts[c] || 0) + 1; });
+  const chip = (id, emoji, label, n) =>
+    `<button class="filter-chip ${activeCategory === id ? 'active' : ''} ${n ? '' : 'empty'}"
+             onclick="setCategory('${id}')">${emoji} ${label} <b>${n}</b></button>`;
+  document.getElementById('filterStrip').innerHTML =
+    chip('all', '🗂️', 'הכל', tasks.length) +
+    CATEGORIES.map(c => chip(c.id, c.emoji, c.label, counts[c.id] || 0)).join('');
+}
+
 /* ═══════ RENDER BOARD ═══════ */
 function render() {
   const q = document.getElementById('searchBox').value.toLowerCase();
+  renderFilters();
+
+  // Tasks in the active life area (stats follow the filter, not the whole board)
+  const inCat = activeCategory === 'all'
+    ? tasks
+    : tasks.filter(t => catOf(t).id === activeCategory);
 
   // Stats
-  const total = tasks.length;
-  const done = tasks.filter(t => t.status === 'done').length;
-  const overdue = tasks.filter(t => t.deadline && t.status !== 'done' && new Date(t.deadline) < new Date().setHours(0,0,0,0)).length;
+  const total = inCat.length;
+  const done = inCat.filter(t => t.status === 'done').length;
+  const overdue = inCat.filter(t => t.deadline && t.status !== 'done' && new Date(t.deadline) < new Date().setHours(0,0,0,0)).length;
   document.getElementById('statsStrip').innerHTML =
     `<div class="stat"><b>${total}</b>סה"כ</div>` +
     `<div class="stat"><b style="color:#4cdf8b">${done}</b>הושלמו</div>` +
@@ -587,10 +669,7 @@ function render() {
 
   // Board
   document.getElementById('board').innerHTML = COLS.map(col => {
-    let colTasks = tasks.filter(t => t.status === col.id);
-    if (q) colTasks = colTasks.filter(t =>
-      t.title.toLowerCase().includes(q) || (t.desc||'').toLowerCase().includes(q)
-    );
+    let colTasks = inCat.filter(t => t.status === col.id && matchesQuery(t, q));
     colTasks.sort((a,b) => (a.order ?? 9999) - (b.order ?? 9999));
 
     return `
@@ -611,6 +690,7 @@ function render() {
 
 function renderCard(t) {
   const dl = dlInfo(t.deadline);
+  const cat = catOf(t);
   const totalSubs = countAllSubs(t.subtasks);
   const doneSubs = countDoneSubs(t.subtasks);
   const effortDays = totalEffort(t.subtasks);
@@ -627,6 +707,7 @@ function renderCard(t) {
       </div>
     </div>
     <div class="task-meta">
+      <span class="category-badge" style="color:${cat.color}">${cat.emoji} ${esc(cat.label)}</span>
       ${t.owner ? `<span class="owner-badge">👤 ${esc(t.owner)}</span>` : ''}
       ${dl ? `<span class="deadline-badge ${dl.cls}">📅 ${dl.text}</span>` : ''}
       ${effortDays ? `<span class="deadline-badge">⏱ ${effortDays}d</span>` : ''}
@@ -645,6 +726,7 @@ function renderCard(t) {
     </div>
     <div class="task-actions-row">
       <button class="btn btn-ghost btn-sm" onclick="openModal('${t.id}')" title="עריכה">✏️ עריכה</button>
+      ${doneSubs ? `<button class="btn btn-ghost btn-sm" onclick="clearDoneSubs('${t.id}')" title="מחק פריטים שהושלמו">🧹 נקה ${doneSubs}</button>` : ''}
       <button class="btn btn-ghost btn-sm" onclick="deleteTask('${t.id}')" title="מחיקה" style="margin-right:auto">🗑️</button>
     </div>
   </div>`;
@@ -980,6 +1062,7 @@ function openModal(editId, defaultStatus) {
     document.getElementById('fPriority').value = t.priority;
     document.getElementById('fDeadline').value = t.deadline || '';
     document.getElementById('fOwner').value = t.owner || '';
+    document.getElementById('fCategory').value = catOf(t).id;
     editSubs = JSON.parse(JSON.stringify(t.subtasks || []));
   } else {
     document.getElementById('modalTitle').textContent = 'משימה חדשה';
@@ -990,6 +1073,8 @@ function openModal(editId, defaultStatus) {
     document.getElementById('fPriority').value = 'medium';
     document.getElementById('fDeadline').value = '';
     document.getElementById('fOwner').value = '';
+    // A new task lands in the life area you are currently filtered to
+    document.getElementById('fCategory').value = activeCategory === 'all' ? 'general' : activeCategory;
     editSubs = [];
   }
   renderSubtaskTree();
@@ -1013,6 +1098,7 @@ function saveTask() {
       t.priority = document.getElementById('fPriority').value;
       t.deadline = document.getElementById('fDeadline').value || null;
       t.owner = document.getElementById('fOwner').value || null;
+      t.category = document.getElementById('fCategory').value;
       t.subtasks = editSubs;
       if (t.status !== oldStatus) {
         const maxOrder = tasks.filter(x => x.status === t.status && x.id !== t.id).reduce((m, x) => Math.max(m, x.order ?? 0), -1);
@@ -1029,11 +1115,28 @@ function saveTask() {
       priority: document.getElementById('fPriority').value,
       deadline: document.getElementById('fDeadline').value || null,
       owner: document.getElementById('fOwner').value || null,
+      category: document.getElementById('fCategory').value,
       subtasks: editSubs, created: Date.now(),
       order: maxOrder + 1,
     });
   }
   save(); closeModal(); render();
+}
+
+/* Clear checked-off items — keeps recurring lists (groceries, errands) reusable */
+function clearDoneSubs(taskId) {
+  const t = tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const n = countDoneSubs(t.subtasks);
+  if (!n) return;
+  if (!confirm(`למחוק ${n} פריטים שהושלמו?`)) return;
+  const prune = list => (list || []).filter(s => {
+    s.children = prune(s.children);
+    const isDone = s.status === 'done' || (!s.status && s.done);
+    return !isDone || s.children.length > 0; // keep a done parent that still has open children
+  });
+  t.subtasks = prune(t.subtasks);
+  save(); render();
 }
 
 function deleteTask(id) {
@@ -1250,6 +1353,10 @@ setInterval(() => save(), 10000);
     } catch(e) {}
   }
 })();
+
+// Populate the category picker in the task modal
+document.getElementById('fCategory').innerHTML =
+  CATEGORIES.map(c => `<option value="${c.id}">${c.emoji} ${c.label}</option>`).join('');
 
 // Load from cloud on startup
 cloudLoad();

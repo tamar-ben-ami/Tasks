@@ -44,6 +44,933 @@
       }
     ],
     "created": 1776354373474,
-    "order": 0
+    "order": 0,
+    "category": "home"
+  },
+  {
+    "id": "1a07a0ae778xpphc",
+    "title": "ביטוחים – סקירה שנתית",
+    "desc": "לעבור על כל הפוליסות פעם בשנה: כיסויים, מחירים וכפל ביטוחים",
+    "status": "todo",
+    "priority": "high",
+    "deadline": null,
+    "owner": null,
+    "category": "insurance",
+    "subtasks": [
+      {
+        "text": "ביטוח בריאות",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "לבדוק מה קופת החולים כבר מכסה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "להשוות הצעות מחיר",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": "לבדוק כיסוי ניתוחים ותרופות מחוץ לסל",
+        "owner": null
+      },
+      {
+        "text": "ביטוח דירה",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "לעדכן שווי תכולה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "לבדוק כיסוי נזקי מים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": "מבנה + תכולה",
+        "owner": null
+      },
+      {
+        "text": "ביטוח רכב",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "חובה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "מקיף / צד ג׳",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "לבדוק הנחת היעדר תביעות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ביטוח חיים ומשכנתא",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ביטוח נסיעות לחו״ל",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "לבדוק אם כרטיס האשראי כבר מכסה",
+        "owner": null
+      },
+      {
+        "text": "לבדוק כפל ביטוחים",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "הר הביטוח – משרד האוצר",
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 1
+  },
+  {
+    "id": "1a07a0ae779kzi0a",
+    "title": "רשימת קניות – סופר",
+    "desc": "רשימה שוטפת. אחרי הקנייה: לסמן ✔ וללחוץ 🧹 כדי לנקות",
+    "status": "todo",
+    "priority": "high",
+    "deadline": null,
+    "owner": null,
+    "category": "shopping",
+    "subtasks": [
+      {
+        "text": "ירקות ופירות",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "עגבניות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "מלפפונים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "בצל",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "בננות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "לימונים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "מוצרי חלב",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "חלב",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "קוטג׳",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "ביצים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "גבינה צהובה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "לחם ומאפים",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "לחם",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "פיתות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "בשר ודגים",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "חזה עוף",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "טחון",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "יבשים ושימורים",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "אורז",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "פסטה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "טונה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "קטניות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "שמן זית",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ניקיון",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "נוזל כלים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "אבקת כביסה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "שקיות זבל",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "טואלטיקה",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "נייר טואלט",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "שמפו",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "משחת שיניים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 2
+  },
+  {
+    "id": "1a07a0ae77abrxz7",
+    "title": "קניות לבית",
+    "desc": "דברים לא־מכולת שצריך לקנות מתישהו",
+    "status": "todo",
+    "priority": "low",
+    "deadline": null,
+    "owner": null,
+    "category": "shopping",
+    "subtasks": [
+      {
+        "text": "מגבות חדשות",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "נורות לד",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "מסננים למזגן",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ארגז כלים בסיסי",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 3
+  },
+  {
+    "id": "1a07a0ae77bii5t1",
+    "title": "כספים – ניהול שוטף",
+    "desc": "סדר פיננסי: תקציב, חסכונות והוצאות קבועות",
+    "status": "todo",
+    "priority": "high",
+    "deadline": null,
+    "owner": null,
+    "category": "money",
+    "subtasks": [
+      {
+        "text": "תקציב חודשי",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "כמה נכנס, כמה יוצא, כמה נשאר",
+        "owner": null
+      },
+      {
+        "text": "מעבר על הוראות קבע",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "לבטל מנויים שלא בשימוש",
+        "owner": null
+      },
+      {
+        "text": "פנסיה",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "לבדוק דמי ניהול",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "לבדוק מסלול השקעה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "קרן השתלמות",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "קרן חירום",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "יעד: 3–6 חודשי הוצאות",
+        "owner": null
+      },
+      {
+        "text": "החזרי מס",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "אפשר להגיש 6 שנים אחורה",
+        "owner": null
+      },
+      {
+        "text": "כרטיסי אשראי – מעבר על החיובים",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 4
+  },
+  {
+    "id": "1a07a0ae77crqgzy",
+    "title": "בריאות – תורים ובדיקות",
+    "desc": "בדיקות תקופתיות ותורים שצריך לקבוע",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": null,
+    "owner": null,
+    "category": "health",
+    "subtasks": [
+      {
+        "text": "בדיקות דם שנתיות",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "רופא שיניים",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "ניקוי אבנית – פעמיים בשנה",
+        "owner": null
+      },
+      {
+        "text": "בדיקת עיניים",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "רופא עור – בדיקת שומות",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "חיסונים – לבדוק מה מעודכן",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "לוודא שיש ערכת עזרה ראשונה בבית",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 5
+  },
+  {
+    "id": "1a07a0ae77dm5hgm",
+    "title": "רכב – טיפולים ורישוי",
+    "desc": "כל מה שקשור לרכב: מוסך, טסט, ביטוח",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": null,
+    "owner": null,
+    "category": "car",
+    "subtasks": [
+      {
+        "text": "טסט שנתי",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "לבדוק תאריך תפוגה ברישיון",
+        "owner": null
+      },
+      {
+        "text": "טיפול תקופתי במוסך",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "חידוש ביטוח חובה + מקיף",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "צמיגים – בדיקת עומק סוליה ולחץ אוויר",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "חידוש רישיון נהיגה",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "תשלום אגרת רישוי",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 6
+  },
+  {
+    "id": "1a07a0ae77exem8b",
+    "title": "מסמכים ובירוקרטיה",
+    "desc": "תוקף מסמכים, רשויות וחשבונות בית",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": null,
+    "owner": null,
+    "category": "docs",
+    "subtasks": [
+      {
+        "text": "דרכונים",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "לבדוק תוקף – חלק מהמדינות דורשות 6 חודשים",
+        "owner": null
+      },
+      {
+        "text": "תעודות זהות וספח",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ביטוח לאומי – לוודא שאין חובות",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ארנונה",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "לבדוק זכאות להנחה",
+        "owner": null
+      },
+      {
+        "text": "חשבונות בית",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "חשמל",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "מים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "גז",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "ועד בית",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "אינטרנט וסלולר",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": "להתמקח על המחיר פעם בשנה",
+        "owner": null
+      },
+      {
+        "text": "תיקיית מסמכים חשובים – סריקה וגיבוי",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 7
+  },
+  {
+    "id": "1a07a0ae77f3yrjl",
+    "title": "משפחה ופנאי",
+    "desc": "ימי הולדת, מתנות, חופשות ותכנונים",
+    "status": "todo",
+    "priority": "low",
+    "deadline": null,
+    "owner": null,
+    "category": "family",
+    "subtasks": [
+      {
+        "text": "ימי הולדת ותאריכים חשובים – לרכז ביומן",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "רשימת מתנות",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "תכנון חופשה",
+        "done": false,
+        "status": "todo",
+        "children": [
+          {
+            "text": "יעד",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "תאריכים",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "טיסות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "לינה",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          },
+          {
+            "text": "ביטוח נסיעות",
+            "done": false,
+            "status": "todo",
+            "children": [],
+            "effort": null,
+            "note": null,
+            "owner": null
+          }
+        ],
+        "effort": null,
+        "note": null,
+        "owner": null
+      },
+      {
+        "text": "ארוחות/מפגשים משפחתיים",
+        "done": false,
+        "status": "todo",
+        "children": [],
+        "effort": null,
+        "note": null,
+        "owner": null
+      }
+    ],
+    "created": 1788753930103,
+    "order": 8
   }
 ]
