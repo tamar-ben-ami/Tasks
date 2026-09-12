@@ -6,18 +6,19 @@ Dates that cost money if you miss them, and the garage's phone number.
 
 | What | Due | Done | Notes |
 | --- | --- | --- | --- |
-| Annual test / roadworthiness | | | Fee paid — test itself not confirmed |
+| Annual test / roadworthiness | | ✓ done | Confirmed done. Exact date not recorded |
 | Licensing fee | | 2026-03-06 | ₪1,119 paid |
-| Mandatory insurance (חובה) | | | Clal — dates unknown. See [insurance.md](insurance.md) |
+| Mandatory insurance (חובה) | | | Clal — certificate not yet found. See [insurance.md](insurance.md) |
 | Third party insurance (צד ג׳) | | | Clal, renews 2027-03. Dates tracked in [insurance.md](insurance.md) |
 | Next service | | | |
 | Driver's licence renewal | | | See [documents.md](documents.md) |
 
 ## Now
 
-- [ ] Confirm the annual test was actually done — the licence fee was paid
-      2026-03-06 and the test follows it, but nothing here records it happening
-- [ ] Find the mandatory (חובה) certificate and record its expiry
+- [ ] Get the licence PDF that came with the 2026-03-06 payment email — it
+      carries the exact expiry date, which nothing here has yet
+- [ ] Get the חובה certificate from Clal (*5454, clalbit.co.il, or the agent) —
+      only the policy booklet was to hand, and it carries no dates
 - [ ] 
 - [ ] 
 

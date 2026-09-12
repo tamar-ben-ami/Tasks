@@ -32,6 +32,8 @@ Events, visits, things already in the diary.
 
 ## Travel
 
+**Planned trips:** [New Zealand](trips/new-zealand/) — planning
+
 ### Planning
 
 - [ ] Destination
